@@ -23,11 +23,6 @@ public class IntakeInCommand extends CommandBase {
     this.intakeSubsystem = intakeSubsystem;
   }
 
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {
-  }
-
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {

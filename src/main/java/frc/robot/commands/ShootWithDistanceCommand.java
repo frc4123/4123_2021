@@ -14,16 +14,10 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ShooterSubsystem;
 
 public class ShootWithDistanceCommand extends CommandBase {
-  /**
-   * Creates a new ShootWithDistanceCommand.
-   */
 
   ShooterSubsystem shooterSubsystem;
-
   NetworkTable table;
-
   NetworkTableEntry target3D;
-
   double topVoltage;
   double botVoltage;
 

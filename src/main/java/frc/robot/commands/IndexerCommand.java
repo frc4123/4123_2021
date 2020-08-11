@@ -24,12 +24,6 @@ public class IndexerCommand extends CommandBase {
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {
-
-  }
-
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
@@ -53,4 +47,3 @@ public class IndexerCommand extends CommandBase {
 
   }
 }
-// change the name of the command class

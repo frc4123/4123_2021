@@ -9,16 +9,13 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
-import frc.robot.Constants.MiscConstants;
+import frc.robot.Constants.VoltageConstants;
 import frc.robot.subsystems.DriveSubsystem;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/latest/docs/software/commandbased/convenience-features.html
 public class AnglePIDCommand extends PIDCommand {
-  /**
-   * Creates a new PIDCommandDebug.
-   */
 
   DriveSubsystem driveSubsystem;
   double theParticularChangeInAnglularPositionWeWouldLike;
@@ -51,7 +48,7 @@ public class AnglePIDCommand extends PIDCommand {
   @Override
   public void initialize() {
 
-    driveSubsystem.setVoltageCompensation(true, MiscConstants.TURN_VOLTAGE_COMPENSATION_VOLTS);
+    driveSubsystem.setVoltageCompensation(true, VoltageConstants.TURN_VOLTAGE_COMPENSATION_VOLTS);
     // Enable this ^ for auto aim
     // set this class's setterpoint by finding error with the passed in setpoint
     setterpoint = driveSubsystem.getGyroAngle() - theParticularChangeInAnglularPositionWeWouldLike;
@@ -82,7 +79,7 @@ public class AnglePIDCommand extends PIDCommand {
   @Override
   public void end(boolean interrupted) {
     super.end(interrupted);
-    driveSubsystem.setVoltageCompensation(false, MiscConstants.TURN_VOLTAGE_COMPENSATION_VOLTS);
+    driveSubsystem.setVoltageCompensation(false, VoltageConstants.TURN_VOLTAGE_COMPENSATION_VOLTS);
   }
 
   @Override

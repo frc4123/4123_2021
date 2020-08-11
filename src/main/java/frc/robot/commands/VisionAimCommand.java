@@ -14,23 +14,16 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DriveSubsystem;
 
 public class VisionAimCommand extends CommandBase {
-  /**
-   * Creates a new AutoAimCommand.
-   */
-
+ 
   static double setpoint;
-
   double thePerticularChangeInAnglularPositionWeWouldLike;
-
   double rotationError;
   double distanceError;
   double rotationAdjust;
-
   NetworkTable table;
   NetworkTableEntry targetX;
   NetworkTableEntry targetY;
   NetworkTableEntry target3DPosition;
-
   AnglePIDCommand turnToAngleCommand;
   DriveSubsystem driveSubsystem;
 

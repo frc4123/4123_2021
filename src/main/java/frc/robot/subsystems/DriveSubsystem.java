@@ -7,10 +7,11 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.TalonSRXFeedbackDevice;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
+// import com.ctre.phoenix.motorcontrol.TalonSRXFeedbackDevice;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+// import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+// import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.controller.PIDController;
@@ -28,14 +29,22 @@ import frc.robot.Constants.PIDConstants;
 import io.github.oblarg.oblog.Loggable;
 import io.github.oblarg.oblog.annotations.Log;
 
+//*TODO*\\
+//make wheel speeds accurate for gearbox
+
 public class DriveSubsystem extends SubsystemBase implements Loggable {
 
   // ** HARDWARE **\\
 
-  private final WPI_TalonSRX leftMaster = new WPI_TalonSRX(DriveConstants.LEFT_DRIVE_MASTER_CAN_ID);
-  private final WPI_VictorSPX leftSlave = new WPI_VictorSPX(DriveConstants.LEFT_DRIVE_SLAVE_CAN_ID);
-  private final WPI_TalonSRX rightMaster = new WPI_TalonSRX(DriveConstants.RIGHT_DRIVE_MASTER_CAN_ID);
-  private final WPI_VictorSPX rightSlave = new WPI_VictorSPX(DriveConstants.RIGHT_DRIVE_SLAVE_CAN_ID);
+  //  private final WPI_TalonSRX leftMaster_ = new WPI_TalonFX(DriveConstants.LEFT_DRIVE_MASTER_CAN_ID);
+  //  private final WPI_Victor rightMaster_ = new WPI_TalonFX(DriveConstants.LEFT_DRIVE_MASTER_CAN_ID);
+  //  private final WPI_TalonSRX leftSlave_ = new WPI_TalonFX(DriveConstants.LEFT_DRIVE_MASTER_CAN_ID);
+  //  private final WPI_Victor rightSlave_ = new WPI_TalonFX(DriveConstants.LEFT_DRIVE_MASTER_CAN_ID);
+
+  private final WPI_TalonFX leftMaster = new WPI_TalonFX(DriveConstants.LEFT_DRIVE_MASTER_CAN_ID);
+  private final WPI_TalonFX  leftSlave = new WPI_TalonFX(DriveConstants.LEFT_DRIVE_SLAVE_CAN_ID);
+  private final WPI_TalonFX rightMaster = new WPI_TalonFX(DriveConstants.RIGHT_DRIVE_MASTER_CAN_ID);
+  private final WPI_TalonFX  rightSlave = new WPI_TalonFX(DriveConstants.RIGHT_DRIVE_SLAVE_CAN_ID);
 
   private final DifferentialDrive differentialDrive = new DifferentialDrive(leftMaster, rightMaster);
 
@@ -51,18 +60,17 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
   Pose2d pose;
 
   public DriveSubsystem() {
-    // Sets the distance per pulse for the encoders
+    //!Set nuetralmode to brake in firmware
 
-    leftMaster.setNeutralMode(NeutralMode.Brake);
-    rightMaster.setNeutralMode(NeutralMode.Brake);
-    leftSlave.setNeutralMode(NeutralMode.Brake);
-    rightSlave.setNeutralMode(NeutralMode.Brake);
-    // check the ramp doesnt seem to work
     rightSlave.follow(rightMaster);
     leftSlave.follow(leftMaster);
 
-    leftMaster.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
-    rightMaster.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
+    leftMaster.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 10);
+    rightMaster.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 10);
+
+    //leftMaster.setSensorPhase(true);
+    // leftMaster.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
+    // rightMaster.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
 
     resetEncoders();
 
@@ -86,22 +94,16 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
    * @param rot the commanded rotation
    */
   public void arcadeDrive(double fwd, double rot) {
-
     differentialDrive.arcadeDrive(fwd, rot);
-    
   }
 
 
   public void stopMotors(){
     differentialDrive.stopMotor();
   }
-  @Log
+
   public double getHeading() {
-
-    // negative because of the unit circle
-    // IEEEremainder is pretty much just modulo
     return Math.IEEEremainder(gyro.getAngle(), 360) * (DriveConstants.IS_GYRO_REVERSED_FOR_PATHWEAVER ? -1.0 : 1.0);
-
   }
 
   @Log
@@ -114,45 +116,35 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
   }
 
   public double getAverageEncoderDistanceMeters() {
-    return (getLeftWheelPositionMeters() + getRightWheelPositionMeters() / 2.0);
+    return ((getLeftWheelPositionMeters() + getRightWheelPositionMeters()) / 2.0);
   }
-
 
   /**
    * Returns the left wheel's position in meters
    * 
-   * @return Wheel position in meters
+   * @return Left wheel position in meters
    */
   @Log
   public double getLeftWheelPositionMeters() {
 
-    return
-    // 1 or 10?
-    // get rid of magic numbers
-    leftMaster.getSelectedSensorPosition() * DriveConstants.INVERT * DriveConstants.TICKS_TO_REVOLUTIOIN_MAG_ENCODER
-        * DriveConstants.WHEEL_CIRCUMFERENCE_METERS;
-
+    return (leftMaster.getSelectedSensorPosition()  * DriveConstants.WHEEL_CIRCUMFERENCE_METERS / DriveConstants.TALONFX_ENCODER_CPR)
+        / DriveConstants.GEAR_RATIO;
+    // return  leftMaster.getSelectedSensorPosition() * DriveConstants.INVERT * DriveConstants.TICKS_TO_REVOLUTIOIN_MAG_ENCODER
+    //     * DriveConstants.WHEEL_CIRCUMFERENCE_METERS;
   }
-
   /**
    * Returns the right wheel's position in meters
    * 
-   * @return Wheel position in meters
+   * @return Left wheel position in meters
    */
   @Log
   public double getRightWheelPositionMeters() {
-
-    return
-    // removedd the gear ratio because the position is is reading from the axel
-    rightMaster.getSelectedSensorPosition(0) * DriveConstants.TICKS_TO_REVOLUTIOIN_MAG_ENCODER
-        * DriveConstants.WHEEL_CIRCUMFERENCE_METERS;
-
+    return (rightMaster.getSelectedSensorPosition()  * DriveConstants.WHEEL_CIRCUMFERENCE_METERS / DriveConstants.TALONFX_ENCODER_CPR) /
+        DriveConstants.GEAR_RATIO;
   }
 
   public SimpleMotorFeedforward getFeedfoward() {
-
     return driveFeedforward;
-
   }
 
   /**
@@ -161,29 +153,23 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
    * @param pose The pose to which to set the odometry.
    */
   public void resetOdometry(Pose2d pose) {
-
     resetEncoders();
     odometry.resetPosition(pose, Rotation2d.fromDegrees(getHeading()));
-
   }
 
   /**
    * Resets the drive encoders to currently read a position of 0.
    */
   public void resetEncoders() {
-
     leftMaster.setSelectedSensorPosition(0, 0, 10);
     rightMaster.setSelectedSensorPosition(0, 0, 10);
-
   }
 
   /**
    * Zeroes the heading of the robot.
    */
   public void resetGyro() {
-
     gyro.reset();
-
   }
 
   /**
@@ -192,17 +178,12 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
    * @return The pose.
    */
   public Pose2d getPose() {
-
     return odometry.getPoseMeters();
-
   }
 
   public void setOutputVoltage(double leftVolts, double rightVolts) {
-
     leftMaster.setVoltage(leftVolts);
     rightMaster.setVoltage(-rightVolts);
-
-    differentialDrive.feed();
   }
 
   public void setVoltageCompensation(boolean isEnabled, double volts) {
@@ -219,9 +200,7 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
    * @return The current wheel speeds.
    */
   public DifferentialDriveWheelSpeeds getWheelSpeeds() {
-
     return new DifferentialDriveWheelSpeeds(getLeftWheelSpeed(), getrightWheelSpeed());
-
   }
 
   /**
@@ -230,10 +209,7 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
    * @return left wheel speed in meters per second
    */
   public double getLeftWheelSpeed() {
-
-    return leftMaster.getSelectedSensorVelocity(0) * DriveConstants.INVERT
-        * DriveConstants.TICKS_TO_REVOLUTION_SECONDS_MAG_ENCODER * (Math.PI * DriveConstants.WHEEL_DIAMETER_METERS);
-
+    return leftMaster.getSelectedSensorVelocity(0) * DriveConstants.TICKS_TO_REVOLUTION_SECONDS_MAG_ENCODER * DriveConstants.WHEEL_CIRCUMFERENCE_METERS;
   }
 
   /**
@@ -242,10 +218,8 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
    * @return right wheel speed in meters per second
    */
   public double getrightWheelSpeed() {
-
     return rightMaster.getSelectedSensorVelocity(0) * DriveConstants.TICKS_TO_REVOLUTION_SECONDS_MAG_ENCODER
         * (Math.PI * DriveConstants.WHEEL_DIAMETER_METERS);
-
   }
 
   // public DifferentialDriveKinematics getKinematics() {
@@ -254,15 +228,11 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
   // }
 
   public PIDController getLeftPIDController() {
-
     return leftPIDController;
-
   }
 
   public PIDController getRightPIDController() {
-
     return rightPIDController;
-
   }
 
   /**
@@ -272,16 +242,11 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
    * @param maxOutput the maximum output to which the drive will be constrained
    */
   public void setMaxOutput(double maxOutput) {
-
     differentialDrive.setMaxOutput(maxOutput);
-
   }
 
   @Override
   public void periodic() {
-
     odometry.update(Rotation2d.fromDegrees(getHeading()), getLeftWheelPositionMeters(), getRightWheelPositionMeters());
-
   }
-
 }

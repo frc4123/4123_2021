@@ -24,11 +24,6 @@ public class IndexSubsystem extends SubsystemBase {
     indexMotor.setNeutralMode(NeutralMode.Brake);
   }
 
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-  }
-
   /**
    * Set the speed for the index motor
    * 

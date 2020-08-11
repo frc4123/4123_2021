@@ -151,7 +151,5 @@ public class RobotContainer {
     return new AutoDriveBackCommand(driveSubsystem)
         .andThen(new WaitCommand(.2).andThen(new ShooterCommand(shooterSubsystem))
             .alongWith(new WaitCommand(1).andThen(new IndexerCommand(indexSubsystem))).withTimeout(7));
-
   }
-
 }

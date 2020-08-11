@@ -14,10 +14,6 @@ public class ShooterCommand extends CommandBase {
 
   ShooterSubsystem shooterSubsystem;
 
-  /**
-   * Creates a new ShooterCommand.
-   */
-
   public ShooterCommand(ShooterSubsystem shooterSubsystem) {
     // Use addRequirements() here to declare subsystem dependencies.
     // SmartDashboard.putNumber("shooter_top", 3);
@@ -25,11 +21,6 @@ public class ShooterCommand extends CommandBase {
 
     this.shooterSubsystem = shooterSubsystem;
     addRequirements(shooterSubsystem);
-  }
-
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {
   }
 
   // Called every time the scheduler runs while the command is scheduled.

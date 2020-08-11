@@ -13,9 +13,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
 
 public class IntakeSubsystem extends SubsystemBase {
-  /**
-   * Creates a new IntakeSubsystem.
-   */
+
   private final WPI_TalonSRX intakeRoller = new WPI_TalonSRX(IntakeConstants.INTAKE_ROLLER_CAN_ID);
   private final WPI_TalonSRX intakeGate = new WPI_TalonSRX(IntakeConstants.INTAKE_GATE_CAN_ID);
 

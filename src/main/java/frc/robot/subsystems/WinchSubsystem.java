@@ -24,17 +24,13 @@ public class WinchSubsystem extends SubsystemBase {
   public WinchSubsystem() {
     //moving to speed controller group
    // winchSlave.follow(winchMaster);
-
     winchMaster.configOpenloopRamp(1);
     winchSlave.configOpenloopRamp(1);
-
     winchMaster.setNeutralMode(NeutralMode.Brake);
     winchSlave.setNeutralMode(NeutralMode.Brake);
-
   }
 
   public void setWinchMotorVoltage(double voltage){
     winchMotors.setVoltage(voltage);
   }
- 
 }
