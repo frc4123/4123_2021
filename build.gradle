@@ -54,9 +54,15 @@ dependencies {
 
     testImplementation 'junit:junit:4.12'
 
+    implementation "com.github.Oblarg.Oblog:lib:3.0.3"
     // Enable simulation gui support. Must check the box in vscode to enable support
     // upon debugging
     simulation wpi.deps.sim.gui(wpi.platforms.desktop, false)
+}
+
+//support for logging
+repositories {
+  maven { url 'https://jitpack.io' }
 }
 
 // Setting up my Jar File. In this case, adding all libraries into the main jar ('fat jar')
