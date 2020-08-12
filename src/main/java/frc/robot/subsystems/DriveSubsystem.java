@@ -209,7 +209,9 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
    * @return left wheel speed in meters per second
    */
   public double getLeftWheelSpeed() {
-    return leftMaster.getSelectedSensorVelocity(0) * DriveConstants.TICKS_TO_REVOLUTION_SECONDS_MAG_ENCODER * DriveConstants.WHEEL_CIRCUMFERENCE_METERS;
+    return leftMaster.getSelectedSensorVelocity(0) * 10 / DriveConstants.TALONFX_ENCODER_CPR / DriveConstants.GEAR_RATIO * DriveConstants.WHEEL_CIRCUMFERENCE_METERS;
+    // u/100ms *  1000ms/s * 1rev/2048u / 11.25 (GR) * Circumference
+    // GR is used to convert from gearbox revolution to axel revolution
   }
 
   /**
@@ -218,8 +220,9 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
    * @return right wheel speed in meters per second
    */
   public double getrightWheelSpeed() {
-    return rightMaster.getSelectedSensorVelocity(0) * DriveConstants.TICKS_TO_REVOLUTION_SECONDS_MAG_ENCODER
-        * (Math.PI * DriveConstants.WHEEL_DIAMETER_METERS);
+    return rightMaster.getSelectedSensorVelocity(0) * 10 / DriveConstants.TALONFX_ENCODER_CPR / DriveConstants.GEAR_RATIO * DriveConstants.WHEEL_CIRCUMFERENCE_METERS;
+      // u/100ms *  1000ms/s * 1rev/2048u / 11.25 (GR) * Circumference
+       // GR is used to convert from gearbox revolution to axel revolution
   }
 
   // public DifferentialDriveKinematics getKinematics() {
