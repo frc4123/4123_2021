@@ -29,9 +29,6 @@ import frc.robot.Constants.PIDConstants;
 import io.github.oblarg.oblog.Loggable;
 import io.github.oblarg.oblog.annotations.Log;
 
-//*TODO*\\
-//make wheel speeds accurate for gearbox
-
 public class DriveSubsystem extends SubsystemBase implements Loggable {
 
   // ** HARDWARE **\\
@@ -47,12 +44,11 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
   private final WPI_TalonFX  rightSlave = new WPI_TalonFX(DriveConstants.RIGHT_DRIVE_SLAVE_CAN_ID);
 
   private final DifferentialDrive differentialDrive = new DifferentialDrive(leftMaster, rightMaster);
-
+  
   private final ADXRS450_Gyro gyro = new ADXRS450_Gyro(SPI.Port.kOnboardCS0);
 
   // **TRAJECTORY**\\
   DifferentialDriveOdometry odometry;
-
   SimpleMotorFeedforward driveFeedforward = new SimpleMotorFeedforward(PIDConstants.KS_FEEDFOWARD,
       PIDConstants.KV_FEEDFOWARD, PIDConstants.KA_FEEDFOWARD);
   PIDController leftPIDController = new PIDController(4, 0, 4.51);
@@ -60,7 +56,7 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
   Pose2d pose;
 
   public DriveSubsystem() {
-    //!Set nuetralmode to brake in firmware
+    //!Set brake to nuetralmode in firmware
 
     rightSlave.follow(rightMaster);
     leftSlave.follow(leftMaster);
@@ -76,7 +72,6 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
 
     odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getHeading()),
         new Pose2d(0, 0, Rotation2d.fromDegrees(getHeading())));
-
   }
 
   /**
@@ -96,7 +91,6 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
   public void arcadeDrive(double fwd, double rot) {
     differentialDrive.arcadeDrive(fwd, rot);
   }
-
 
   public void stopMotors(){
     differentialDrive.stopMotor();
@@ -130,7 +124,7 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
     return (leftMaster.getSelectedSensorPosition()  * DriveConstants.WHEEL_CIRCUMFERENCE_METERS / DriveConstants.TALONFX_ENCODER_CPR)
         / DriveConstants.GEAR_RATIO;
     // return  leftMaster.getSelectedSensorPosition() * DriveConstants.INVERT * DriveConstants.TICKS_TO_REVOLUTIOIN_MAG_ENCODER
-    //     * DriveConstants.WHEEL_CIRCUMFERENCE_METERS;
+    // \* DriveConstants.WHEEL_CIRCUMFERENCE_METERS;
   }
   /**
    * Returns the right wheel's position in meters
@@ -200,7 +194,7 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
    * @return The current wheel speeds.
    */
   public DifferentialDriveWheelSpeeds getWheelSpeeds() {
-    return new DifferentialDriveWheelSpeeds(getLeftWheelSpeed(), getrightWheelSpeed());
+    return new DifferentialDriveWheelSpeeds(getLeftWheelSpeed(), getRightWheelSpeed());
   }
 
   /**
@@ -219,7 +213,7 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
    * 
    * @return right wheel speed in meters per second
    */
-  public double getrightWheelSpeed() {
+  public double getRightWheelSpeed() {
     return rightMaster.getSelectedSensorVelocity(0) * 10 / DriveConstants.TALONFX_ENCODER_CPR / DriveConstants.GEAR_RATIO * DriveConstants.WHEEL_CIRCUMFERENCE_METERS;
       // u/100ms *  1000ms/s * 1rev/2048u / 11.25 (GR) * Circumference
        // GR is used to convert from gearbox revolution to axel revolution

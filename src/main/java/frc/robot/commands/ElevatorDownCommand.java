@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.VoltageConstants;
 import frc.robot.subsystems.ElevatorSubsystem;
 
-//TODO make it on a timer so it goes down and doesnt wind back up. change to whenpressed
+//TODO make motor on a timer so it goes down and the line doesnt wind back up; Change to whenpressed?
 
 public class ElevatorDownCommand extends CommandBase {
 
