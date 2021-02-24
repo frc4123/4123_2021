@@ -7,6 +7,8 @@
 
 package frc.robot.subsystems;
 
+import static java.lang.Math.IEEEremainder;
+
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 // import com.ctre.phoenix.motorcontrol.TalonSRXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
@@ -97,7 +99,8 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
   }
 
   public double getHeading() {
-    return Math.IEEEremainder(gyro.getAngle(), 360) * (DriveConstants.IS_GYRO_REVERSED_FOR_PATHWEAVER ? -1.0 : 1.0);
+    return IEEEremainder(gyro.getAngle(), 360) * 
+    (DriveConstants.IS_GYRO_REVERSED_FOR_PATHWEAVER ? -1.0 : 1.0);
   }
 
   @Log
